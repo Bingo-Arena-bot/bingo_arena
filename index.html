@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bingo Arena — Prototype</title>
+<style>
+:root{--navy:#061633;--panel:#0c2450;--gold:#ffc928;--muted:#a9bfdf;--line:#294a7a}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at top,#12366d,#041128 60%);color:#f5f8ff;font:15px system-ui,Arial,sans-serif}
+header{padding:18px 16px 12px;text-align:center;border-bottom:1px solid var(--line);position:sticky;top:0;background:#061633ed;backdrop-filter:blur(8px);z-index:2}
+.brand{font-size:25px;font-weight:900;letter-spacing:1px;color:var(--gold)}.sub{font-size:12px;color:var(--muted)}
+main{max-width:680px;margin:auto;padding:16px 14px 90px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.panel{background:linear-gradient(145deg,#102c5c,#081a39);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 8px 24px #0004}
+.stat b{display:block;color:var(--gold);font-size:23px;margin-top:4px}.hero{text-align:center;margin:16px 0}.hero h1{font-size:32px;margin:6px 0;color:#fff}.hero p{color:var(--muted);margin:0 0 14px}
+button{border:0;border-radius:12px;padding:12px 16px;font-weight:800;font-size:15px;cursor:pointer;background:linear-gradient(#ffe47a,#ffb900);color:#211600}
+button.secondary{background:#173d76;color:white;border:1px solid #4977b6}button:disabled{opacity:.45;cursor:not-allowed}
+.section-title{display:flex;justify-content:space-between;align-items:center;margin:22px 2px 10px}.section-title h2{font-size:18px;margin:0}
+.room{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:9px 0}.room small{display:block;color:var(--muted);margin-top:4px}.room strong{font-size:15px}
+#game{display:none;margin-top:16px}.game-top{display:flex;justify-content:space-between;align-items:center;gap:8px}.ball{width:82px;height:82px;border-radius:50%;display:grid;place-items:center;margin:14px auto;background:radial-gradient(circle at 30% 25%,#fff,#8dc8ff 22%,#1162c4 65%,#082c68);border:4px solid #f4cc48;color:#071735;font-size:27px;font-weight:900;box-shadow:0 0 25px #3199ff77}
+table{border-spacing:4px;width:100%;table-layout:fixed;margin:10px 0}th{background:#164f9e;padding:9px 2px;border-radius:7px;color:white}td{height:52px;text-align:center;background:#f4f7ff;color:#0b1c39;border-radius:7px;font-size:17px;font-weight:800;cursor:pointer}td.marked{background:#ffd54a;color:#241700;box-shadow:inset 0 0 0 2px #fff}
+td.free{background:#ffe88b;color:#503700;font-size:12px;cursor:default}
+td.denied{animation:deny .45s;background:#ff6b6b;color:#fff;box-shadow:inset 0 0 0 2px #fff}
+td.win{background:#4ee08a;color:#05301a}
+td.pending{opacity:.65}
+@keyframes deny{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+.recent{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:8px 0 2px;min-height:30px}
+.recent span{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:#173d76;border:1px solid #4977b6;font-size:12px;font-weight:800}
+.status{text-align:center;margin:6px 0;color:var(--muted);font-size:13px}
+.banner{text-align:center;padding:10px;border-radius:12px;margin:8px 0;font-weight:800;display:none}
+.banner.win{display:block;background:#1f8f54}.banner.lose{display:block;background:#7a2a3a}
+#toast.err{background:#ff8b8b;color:#3a0000}.actions{display:flex;gap:8px;flex-wrap:wrap}.actions button{flex:1}
+.note{color:var(--muted);font-size:12px;line-height:1.5;margin-top:14px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#061633f2;border-top:1px solid var(--line);display:flex;justify-content:center;gap:28px;padding:12px;color:var(--muted);font-size:12px}
+#toast{position:fixed;left:50%;bottom:75px;transform:translateX(-50%);background:#ffe18a;color:#211600;padding:10px 16px;border-radius:12px;font-weight:800;display:none;z-index:5}
+@media(max-width:420px){td{height:46px;font-size:15px}.room{align-items:flex-start}.room button{padding:10px}.hero h1{font-size:28px}}
+</style></head>
+<body>
+<header><div class="brand">👑 BINGO ARENA</div><div class="sub">TELEGRAM MINI APP · FREE-POINTS DEMO</div></header>
+<main>
+<section id="home">
+ <div class="stats">
+  <div class="panel stat">⭐ Your Points<b id="points">—</b></div>
+  <div class="panel stat">🟢 Players In Rooms<b id="online">—</b></div>
+ </div>
+ <div class="hero"><h1>PLAY · ENJOY · BINGO</h1><p>Join a public room and play 75-Ball Bingo.</p><button onclick="document.getElementById('rooms').scrollIntoView({behavior:'smooth'})">▶ Play Bingo</button></div>
+ <div class="section-title"><h2>🌐 Public Bingo Rooms</h2><span class="sub">LIVE</span></div>
+ <div id="roomList"><div class="panel room"><div><strong>Loading rooms…</strong></div></div></div>
+ <div id="rooms" class="note">Balls are drawn by the server on a fixed schedule. Tap a number on your card only after it has been called — every Bingo claim is checked against the server's official called numbers.</div>
+</section>
+<section id="game" class="panel">
+ <div class="game-top"><div><b id="roomName">Arena Classic</b><div class="sub" id="gameInfo">75-Ball Bingo · Free play</div></div><button class="secondary" onclick="leaveRoom()">← Rooms</button></div>
+ <div class="ball" id="current">—</div><div style="text-align:center" class="sub">LATEST CALLED NUMBER</div>
+ <div class="status" id="status">Connecting…</div>
+ <div class="recent" id="recent" aria-label="Recently called numbers"></div>
+ <div class="banner" id="banner"></div>
+ <table aria-label="Bingo card"><thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead><tbody id="card"></tbody></table>
+ <div class="actions"><button class="secondary" id="newGameBtn" onclick="joinRoom(roomId)" style="display:none">▶ Next game</button><button id="claimBtn" onclick="claimBingo()">Claim Bingo</button></div>
+ <div class="note">Only numbers already called by the server can be marked — tap a marked number again to unmark it. Numbers are never marked for you. The FREE square is always marked. Invalid claims are counted, and after 3 you can't claim again in that game.</div>
+</section>
+</main>
+<nav><span>⌂ Home</span><span>▦ Rooms</span><span>🏆 Leaderboard</span><span>⚙ Settings</span></nav><div id="toast"></div>
+<script src="/app.js"></script></body></html>
